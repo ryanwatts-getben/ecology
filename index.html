@@ -1,0 +1,2484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>The Living World — An Interactive Field Guide to Ecology</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,700;9..144,900&family=DM+Sans:wght@400;500;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --moss: #2d4a2b;
+  --moss-deep: #1a2e19;
+  --leaf: #4a7c3a;
+  --sage: #a8b89a;
+  --sage-light: #d4dccb;
+  --cream: #faf6ed;
+  --parchment: #f3ecd8;
+  --paper: #fdfaf2;
+  --sun: #f4b942;
+  --sun-deep: #d99a25;
+  --clay: #c8553d;
+  --clay-deep: #9a3d2a;
+  --sky: #6a9bd1;
+  --sky-deep: #3d6fa8;
+  --berry: #8b3a62;
+  --soil: #5a3a22;
+  --shadow: rgba(26, 46, 25, 0.15);
+  --line: rgba(26, 46, 25, 0.18);
+ 
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'DM Sans', -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+ 
+* { margin: 0; padding: 0; box-sizing: border-box; }
+ 
+html { scroll-behavior: smooth; }
+ 
+body {
+  background-color: var(--cream);
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(168, 184, 154, 0.18) 0%, transparent 35%),
+    radial-gradient(circle at 85% 70%, rgba(244, 185, 66, 0.12) 0%, transparent 35%),
+    repeating-linear-gradient(0deg, transparent 0, transparent 32px, rgba(26, 46, 25, 0.025) 32px, rgba(26, 46, 25, 0.025) 33px);
+  color: var(--moss-deep);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+ 
+/* paper grain */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.1  0 0 0 0 0.18  0 0 0 0 0.1  0 0 0 0.05 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.6;
+  mix-blend-mode: multiply;
+}
+ 
+/* ============ NAV ============ */
+nav.topnav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(250, 246, 237, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--moss);
+  letter-spacing: -0.01em;
+}
+.brand-mark {
+  width: 36px; height: 36px;
+  background: var(--moss);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  color: var(--sun);
+  font-size: 20px;
+  box-shadow: 0 4px 12px var(--shadow);
+}
+.nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--moss-deep);
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 20px;
+  transition: all 0.2s;
+  letter-spacing: 0.02em;
+}
+.nav-links a:hover {
+  background: var(--moss);
+  color: var(--cream);
+}
+.progress-pill {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--moss);
+  color: var(--sun);
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+ 
+/* ============ LAYOUT ============ */
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 24px;
+  position: relative;
+  z-index: 2;
+}
+ 
+section {
+  padding: 80px 0;
+  position: relative;
+  z-index: 2;
+}
+ 
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--leaf);
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding: 6px 12px;
+  background: rgba(74, 124, 58, 0.1);
+  border-radius: 20px;
+}
+.section-tag::before {
+  content: "";
+  width: 6px; height: 6px;
+  background: var(--leaf);
+  border-radius: 50%;
+}
+ 
+h1, h2, h3, h4 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--moss-deep);
+}
+ 
+h2 {
+  font-size: clamp(36px, 5vw, 56px);
+  margin-bottom: 16px;
+  font-variation-settings: "opsz" 144;
+}
+h2 em {
+  font-style: italic;
+  color: var(--clay);
+  font-weight: 500;
+}
+ 
+h3 {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+ 
+.lead {
+  font-size: 18px;
+  color: var(--moss);
+  max-width: 640px;
+  margin-bottom: 36px;
+  line-height: 1.55;
+}
+ 
+/* ============ HERO ============ */
+.hero {
+  padding: 70px 0 60px;
+  position: relative;
+  overflow: hidden;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+@media (max-width: 800px) {
+  .hero-grid { grid-template-columns: 1fr; }
+}
+ 
+.hero h1 {
+  font-size: clamp(48px, 8vw, 96px);
+  font-weight: 900;
+  line-height: 0.95;
+  font-variation-settings: "opsz" 144;
+  margin-bottom: 24px;
+  color: var(--moss-deep);
+}
+.hero h1 em {
+  font-style: italic;
+  font-weight: 400;
+  color: var(--clay);
+  display: block;
+}
+.hero h1 .underline {
+  background-image: linear-gradient(transparent 65%, var(--sun) 65%);
+  background-repeat: no-repeat;
+  padding: 0 4px;
+}
+.hero-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+}
+.meta-chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 8px 14px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  color: var(--moss);
+}
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--moss);
+  color: var(--cream);
+  padding: 16px 28px;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 15px;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  box-shadow: 0 8px 24px var(--shadow);
+  transition: all 0.2s;
+  cursor: pointer;
+  border: none;
+}
+.hero-cta:hover {
+  transform: translateY(-2px);
+  background: var(--moss-deep);
+  box-shadow: 0 12px 32px var(--shadow);
+}
+.hero-cta::after { content: "→"; font-size: 18px; }
+ 
+.hero-illustration {
+  position: relative;
+  height: 420px;
+}
+ 
+/* SPACE Framework Card */
+.space-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px;
+  margin-top: 50px;
+  box-shadow: 0 12px 40px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.space-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--clay), var(--sun), var(--leaf), var(--sky), var(--berry));
+}
+.space-title {
+  font-family: var(--font-display);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--leaf);
+  margin-bottom: 16px;
+  font-weight: 700;
+}
+.space-letters {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+@media (max-width: 700px) {
+  .space-letters { grid-template-columns: repeat(2, 1fr); }
+}
+.space-letter {
+  text-align: center;
+  padding: 14px 8px;
+  border-radius: 12px;
+  background: var(--cream);
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.space-letter:hover {
+  transform: translateY(-3px);
+  background: var(--moss);
+  color: var(--cream);
+}
+.space-letter:hover .space-letter-name { color: var(--sun); }
+.space-letter-letter {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1;
+  font-style: italic;
+  color: var(--clay);
+}
+.space-letter-name {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-top: 6px;
+  color: var(--moss);
+}
+.space-detail {
+  margin-top: 16px;
+  padding: 14px 18px;
+  background: var(--cream);
+  border-left: 3px solid var(--sun);
+  border-radius: 4px;
+  font-size: 14px;
+  color: var(--moss-deep);
+  display: none;
+}
+.space-detail.active { display: block; animation: fadeIn 0.3s; }
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+ 
+/* ============ LEVELS OF ORGANIZATION ============ */
+.levels-section {
+  background: linear-gradient(180deg, transparent 0%, rgba(168, 184, 154, 0.15) 50%, transparent 100%);
+}
+ 
+.levels-container {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 40px;
+  align-items: start;
+}
+@media (max-width: 800px) {
+  .levels-container { grid-template-columns: 1fr; }
+}
+ 
+.levels-list {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 8px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+.level-btn {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: none;
+  padding: 14px 18px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.2s;
+  color: var(--moss-deep);
+  font-weight: 500;
+}
+.level-btn:hover { background: var(--cream); }
+.level-btn.active {
+  background: var(--moss);
+  color: var(--cream);
+}
+.level-btn .num {
+  width: 32px; height: 32px;
+  background: var(--sun);
+  color: var(--moss-deep);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.level-btn.active .num { background: var(--cream); color: var(--moss); }
+ 
+.level-display {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 32px;
+  min-height: 380px;
+  box-shadow: 0 8px 24px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.level-display-content { position: relative; z-index: 2; }
+.level-display h3 {
+  font-size: 32px;
+  color: var(--moss-deep);
+  margin-bottom: 6px;
+}
+.level-display .subtitle {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--clay);
+  margin-bottom: 16px;
+}
+.level-display .definition {
+  font-size: 17px;
+  line-height: 1.55;
+  margin-bottom: 18px;
+  color: var(--moss);
+}
+.level-display .example {
+  background: var(--cream);
+  border-left: 4px solid var(--leaf);
+  padding: 14px 18px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.level-display .example strong {
+  color: var(--leaf);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: block;
+  margin-bottom: 4px;
+}
+.level-illustration {
+  position: absolute;
+  right: -20px; top: -20px;
+  width: 260px; height: 260px;
+  opacity: 0.12;
+  z-index: 1;
+}
+ 
+.mnemonic-box {
+  margin-top: 20px;
+  background: var(--moss-deep);
+  color: var(--cream);
+  padding: 24px;
+  border-radius: 12px;
+  text-align: center;
+}
+.mnemonic-box h4 {
+  color: var(--sun);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 12px;
+}
+.mnemonic-text {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 20px;
+  line-height: 1.4;
+}
+.mnemonic-text span {
+  color: var(--sun);
+  font-weight: 700;
+  font-style: normal;
+  font-family: var(--font-display);
+}
+ 
+/* ============ ENERGY PYRAMID ============ */
+.energy-section { background: linear-gradient(180deg, transparent, rgba(244, 185, 66, 0.06), transparent); }
+.pyramid-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+@media (max-width: 800px) { .pyramid-grid { grid-template-columns: 1fr; } }
+ 
+.pyramid-svg-wrap {
+  position: relative;
+}
+.pyramid-svg {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: block;
+}
+.pyramid-tier {
+  cursor: pointer;
+  transition: all 0.3s;
+  transform-origin: center;
+}
+.pyramid-tier:hover { filter: brightness(1.1); }
+.pyramid-tier.active text { font-weight: 900; }
+ 
+.energy-info {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+.energy-info-tier {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--clay);
+  margin-bottom: 4px;
+}
+.energy-info h3 { font-size: 26px; margin-bottom: 10px; }
+.energy-stat {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.energy-stat .num {
+  font-family: var(--font-display);
+  font-size: 56px;
+  font-weight: 900;
+  font-variation-settings: "opsz" 144;
+  color: var(--sun-deep);
+  line-height: 1;
+}
+.energy-stat .unit {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--moss);
+}
+.energy-info .desc {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--moss);
+  margin-bottom: 14px;
+}
+.energy-info .examples {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.energy-info .examples span {
+  background: var(--cream);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  border: 1px solid var(--line);
+}
+ 
+.ten-percent {
+  background: var(--moss-deep);
+  color: var(--cream);
+  padding: 24px;
+  border-radius: 16px;
+  margin-top: 32px;
+  position: relative;
+  overflow: hidden;
+}
+.ten-percent::before {
+  content: "10%";
+  position: absolute;
+  right: -10px; top: -20px;
+  font-family: var(--font-display);
+  font-size: 180px;
+  font-weight: 900;
+  color: var(--sun);
+  opacity: 0.15;
+  line-height: 1;
+}
+.ten-percent h4 {
+  color: var(--sun);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  margin-bottom: 8px;
+  position: relative;
+}
+.ten-percent p {
+  font-size: 15px;
+  line-height: 1.55;
+  position: relative;
+  max-width: 80%;
+}
+ 
+/* ============ FOOD WEB ============ */
+.web-section {
+  background: linear-gradient(180deg, transparent, rgba(74, 124, 58, 0.07), transparent);
+}
+.web-controls {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.web-btn {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  padding: 10px 18px;
+  border-radius: 100px;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: var(--moss-deep);
+}
+.web-btn:hover { background: var(--sage-light); }
+.web-btn.active {
+  background: var(--moss);
+  color: var(--cream);
+  border-color: var(--moss);
+}
+ 
+.web-canvas-wrap {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 8px 24px var(--shadow);
+  position: relative;
+  overflow: hidden;
+}
+.web-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+ 
+.organism-node {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.organism-node:hover .node-bg { fill: var(--sun); }
+.organism-node.selected .node-bg { fill: var(--clay); }
+.organism-node.eats .node-bg { fill: #6ab04c; stroke: var(--leaf); stroke-width: 3; }
+.organism-node.eaten-by .node-bg { fill: var(--clay); stroke: var(--clay-deep); stroke-width: 3; }
+.organism-node.dimmed { opacity: 0.25; }
+ 
+.web-info {
+  margin-top: 18px;
+  padding: 18px 20px;
+  background: var(--cream);
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  min-height: 100px;
+}
+.web-info-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: var(--moss-deep);
+}
+.web-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.web-info-row .label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.web-info-row .label.eats { background: #6ab04c; color: white; }
+.web-info-row .label.eaten { background: var(--clay); color: white; }
+.web-info-row .label.role { background: var(--moss-deep); color: var(--sun); }
+ 
+/* ============ VOCAB FLASHCARDS ============ */
+.vocab-section { background: linear-gradient(180deg, transparent, rgba(200, 85, 61, 0.05), transparent); }
+.flashcard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+  perspective: 1000px;
+}
+.flashcard {
+  height: 180px;
+  cursor: pointer;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+}
+.flashcard.flipped { transform: rotateY(180deg); }
+.flashcard-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 14px;
+  padding: 20px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 1px solid var(--line);
+  box-shadow: 0 6px 18px var(--shadow);
+}
+.flashcard-front {
+  background: var(--paper);
+}
+.flashcard-front .term {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--moss-deep);
+  font-variation-settings: "opsz" 144;
+  line-height: 1.1;
+}
+.flashcard-front .hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-top: 14px;
+  color: var(--leaf);
+  opacity: 0.7;
+}
+.flashcard-back {
+  background: var(--moss);
+  color: var(--cream);
+  transform: rotateY(180deg);
+}
+.flashcard-back .def {
+  font-size: 14px;
+  line-height: 1.45;
+}
+.flashcard-back .term-small {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--sun);
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+ 
+/* category color top bar */
+.flashcard.cat-energy .flashcard-front { border-top: 5px solid var(--sun); }
+.flashcard.cat-org .flashcard-front { border-top: 5px solid var(--leaf); }
+.flashcard.cat-pop .flashcard-front { border-top: 5px solid var(--sky); }
+.flashcard.cat-invasive .flashcard-front { border-top: 5px solid var(--clay); }
+ 
+.vocab-filter {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.vocab-filter span {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--moss);
+  margin-right: 4px;
+}
+ 
+/* ============ POPULATION ============ */
+.pop-section { background: linear-gradient(180deg, transparent, rgba(106, 155, 209, 0.08), transparent); }
+.pop-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 36px;
+}
+@media (max-width: 800px) { .pop-grid { grid-template-columns: 1fr; } }
+ 
+.pop-sim {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+.pop-sim canvas {
+  width: 100%;
+  height: 280px;
+  background: linear-gradient(180deg, #e8efde 0%, #d4dccb 100%);
+  border-radius: 10px;
+  display: block;
+}
+.pop-readout {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 18px;
+}
+.readout-cell {
+  background: var(--cream);
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  border: 1px solid var(--line);
+}
+.readout-cell .label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--moss);
+  margin-bottom: 4px;
+}
+.readout-cell .num {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 900;
+  font-variation-settings: "opsz" 144;
+  color: var(--moss-deep);
+  line-height: 1;
+}
+.pop-controls {
+  display: flex;
+  gap: 8px;
+  margin-top: 14px;
+  flex-wrap: wrap;
+}
+.pop-controls button {
+  flex: 1;
+  min-width: 100px;
+  padding: 10px 12px;
+  border-radius: 100px;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pop-controls .add { background: var(--leaf); color: white; }
+.pop-controls .imm { background: var(--sky); color: white; }
+.pop-controls .emm { background: var(--sun-deep); color: white; }
+.pop-controls .dth { background: var(--clay); color: white; }
+.pop-controls .rst { background: var(--moss); color: var(--cream); flex: 0 0 100%; }
+.pop-controls button:hover { transform: translateY(-2px); }
+ 
+.pop-glossary {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px var(--shadow);
+}
+.pop-term {
+  padding: 14px 0;
+  border-bottom: 1px dashed var(--line);
+}
+.pop-term:last-child { border: none; }
+.pop-term .name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--moss-deep);
+  margin-bottom: 4px;
+}
+.pop-term .def { font-size: 14px; color: var(--moss); line-height: 1.5; }
+.pop-term .icon {
+  display: inline-block;
+  width: 24px; height: 24px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 14px;
+  line-height: 24px;
+}
+ 
+/* ============ INVASIVE ============ */
+.invasive-section { background: linear-gradient(180deg, transparent, rgba(139, 58, 98, 0.06), transparent); }
+ 
+.invasive-warning {
+  background: var(--moss-deep);
+  color: var(--cream);
+  border-radius: 16px;
+  padding: 28px;
+  margin-bottom: 36px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 20px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.invasive-warning::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, transparent 0, transparent 20px, rgba(244, 185, 66, 0.04) 20px, rgba(244, 185, 66, 0.04) 22px);
+  pointer-events: none;
+}
+.warning-icon {
+  width: 64px; height: 64px;
+  background: var(--clay);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-size: 32px;
+}
+.invasive-warning h3 {
+  color: var(--sun);
+  font-size: 22px;
+  margin-bottom: 8px;
+}
+.invasive-warning p { font-size: 15px; line-height: 1.55; }
+ 
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+@media (max-width: 700px) { .controls-grid { grid-template-columns: 1fr; } }
+ 
+.control-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 8px 24px var(--shadow);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s;
+}
+.control-card:hover { transform: translateY(-4px); }
+.control-card .badge {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  padding: 4px 10px;
+  border-radius: 4px;
+  font-weight: 700;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+.control-card.physical .badge { background: var(--sky); color: white; }
+.control-card.chemical .badge { background: var(--clay); color: white; }
+.control-card.biological .badge { background: var(--leaf); color: white; }
+.control-card h4 {
+  font-family: var(--font-display);
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: var(--moss-deep);
+}
+.control-card .what {
+  font-size: 14px;
+  color: var(--moss);
+  line-height: 1.55;
+  margin-bottom: 16px;
+}
+.control-card .examples-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--clay);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+.control-card ul {
+  list-style: none;
+  padding: 0;
+}
+.control-card li {
+  font-size: 13px;
+  padding: 4px 0;
+  color: var(--moss-deep);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.control-card li::before {
+  content: "→";
+  color: var(--leaf);
+  font-weight: 700;
+}
+.control-card .icon-area {
+  position: absolute;
+  right: 12px; top: 18px;
+  font-size: 32px;
+  opacity: 0.2;
+}
+ 
+/* ============ QUIZ ============ */
+.quiz-section { background: linear-gradient(180deg, transparent, rgba(45, 74, 43, 0.08), transparent); }
+ 
+.quiz-intro {
+  background: var(--moss);
+  color: var(--cream);
+  padding: 32px;
+  border-radius: 16px;
+  margin-bottom: 28px;
+  text-align: center;
+}
+.quiz-intro h3 {
+  color: var(--sun);
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+.quiz-intro p { font-size: 15px; max-width: 480px; margin: 0 auto 20px; }
+.quiz-start {
+  background: var(--sun);
+  color: var(--moss-deep);
+  border: none;
+  padding: 14px 32px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: all 0.2s;
+}
+.quiz-start:hover { background: var(--sun-deep); transform: translateY(-2px); }
+ 
+.quiz-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 24px var(--shadow);
+  display: none;
+}
+.quiz-card.active { display: block; animation: slideUp 0.4s; }
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+ 
+.quiz-progress {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.quiz-counter {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  color: var(--moss);
+}
+.quiz-bar {
+  flex: 1;
+  height: 6px;
+  background: var(--cream);
+  border-radius: 100px;
+  margin: 0 16px;
+  overflow: hidden;
+}
+.quiz-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--leaf), var(--sun));
+  border-radius: 100px;
+  transition: width 0.4s ease;
+}
+ 
+.quiz-question {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1.3;
+  margin-bottom: 12px;
+  color: var(--moss-deep);
+}
+.quiz-image {
+  margin: 12px 0 20px;
+  text-align: center;
+}
+.quiz-image svg {
+  max-width: 100%;
+  height: auto;
+  background: var(--cream);
+  border-radius: 10px;
+  padding: 12px;
+}
+.quiz-options { display: grid; gap: 10px; }
+.quiz-option {
+  background: var(--cream);
+  border: 2px solid var(--line);
+  padding: 16px 20px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 15px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  transition: all 0.15s;
+  color: var(--moss-deep);
+}
+.quiz-option:hover:not(:disabled) {
+  border-color: var(--moss);
+  background: var(--paper);
+}
+.quiz-option:disabled { cursor: not-allowed; }
+.quiz-option .letter {
+  width: 32px; height: 32px;
+  background: var(--moss);
+  color: var(--cream);
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.quiz-option.correct {
+  border-color: var(--leaf);
+  background: rgba(74, 124, 58, 0.15);
+}
+.quiz-option.correct .letter { background: var(--leaf); }
+.quiz-option.wrong {
+  border-color: var(--clay);
+  background: rgba(200, 85, 61, 0.12);
+}
+.quiz-option.wrong .letter { background: var(--clay); }
+ 
+.quiz-explain {
+  margin-top: 18px;
+  padding: 16px 20px;
+  background: var(--moss-deep);
+  color: var(--cream);
+  border-radius: 12px;
+  display: none;
+}
+.quiz-explain.show { display: block; animation: fadeIn 0.3s; }
+.quiz-explain .verdict {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 18px;
+  margin-bottom: 6px;
+}
+.quiz-explain.right .verdict { color: var(--sun); }
+.quiz-explain.wrong .verdict { color: #ffb3a3; }
+.quiz-explain p { font-size: 14px; line-height: 1.55; }
+ 
+.quiz-next {
+  margin-top: 18px;
+  background: var(--moss);
+  color: var(--cream);
+  border: none;
+  padding: 12px 24px;
+  border-radius: 100px;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  display: none;
+}
+.quiz-next.show { display: inline-flex; align-items: center; gap: 8px; }
+.quiz-next:hover { background: var(--moss-deep); }
+.quiz-next::after { content: "→"; }
+ 
+.quiz-results {
+  text-align: center;
+  padding: 40px 20px;
+}
+.quiz-results h3 {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+.quiz-score {
+  font-family: var(--font-display);
+  font-size: 96px;
+  font-weight: 900;
+  color: var(--sun-deep);
+  line-height: 1;
+  font-variation-settings: "opsz" 144;
+}
+.quiz-score .denom { color: var(--moss); font-size: 56px; }
+.quiz-feedback {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 22px;
+  color: var(--moss-deep);
+  margin-top: 16px;
+  margin-bottom: 24px;
+}
+.quiz-history {
+  background: var(--cream);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 20px;
+  border: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--moss);
+}
+.quiz-history-title {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 8px;
+  color: var(--leaf);
+  font-weight: 700;
+}
+.history-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+ 
+/* ============ CHEAT SHEET ============ */
+.cheat-section { padding-bottom: 100px; }
+.cheat-card {
+  background: var(--moss-deep);
+  color: var(--cream);
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 20px 60px rgba(26, 46, 25, 0.4);
+  position: relative;
+  overflow: hidden;
+}
+.cheat-card::before {
+  content: "";
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--sun) 0%, transparent 70%);
+  opacity: 0.15;
+}
+.cheat-card h3 {
+  color: var(--sun);
+  font-size: 32px;
+  margin-bottom: 8px;
+  position: relative;
+}
+.cheat-card .sub {
+  color: var(--sage);
+  margin-bottom: 28px;
+  position: relative;
+}
+.cheat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  position: relative;
+}
+@media (max-width: 700px) { .cheat-grid { grid-template-columns: 1fr; } }
+.cheat-item {
+  background: rgba(250, 246, 237, 0.05);
+  padding: 18px;
+  border-radius: 12px;
+  border-left: 3px solid var(--sun);
+}
+.cheat-item h4 {
+  color: var(--sun);
+  font-size: 14px;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-bottom: 8px;
+}
+.cheat-item p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--cream);
+}
+.cheat-item p strong { color: var(--sun); }
+ 
+footer {
+  text-align: center;
+  padding: 40px 20px;
+  font-size: 13px;
+  color: var(--moss);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+}
+ 
+/* utility */
+.divider {
+  height: 1px;
+  background: var(--line);
+  margin: 30px 0;
+}
+.kbd {
+  font-family: var(--font-mono);
+  background: var(--paper);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 12px;
+  border: 1px solid var(--line);
+}
+</style>
+</head>
+<body>
+ 
+<!-- ============ NAV ============ -->
+<nav class="topnav">
+  <div class="brand">
+    <div class="brand-mark">⚘</div>
+    <span>The Living World</span>
+  </div>
+  <div class="nav-links">
+    <a href="#start">Start</a>
+    <a href="#levels">Levels</a>
+    <a href="#energy">Energy</a>
+    <a href="#web">Food Web</a>
+    <a href="#vocab">Vocab</a>
+    <a href="#population">Population</a>
+    <a href="#invasive">Invasive</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+  <div class="progress-pill" id="progressPill">⚘ READY</div>
+</nav>
+ 
+<!-- ============ HERO ============ -->
+<div class="container hero" id="start">
+  <div class="hero-grid">
+    <div>
+      <div class="section-tag">Field Guide · Edition I</div>
+      <h1>
+        <span class="underline">Ecology,</span>
+        <em>but actually</em>
+        <span>understandable.</span>
+      </h1>
+      <div class="hero-meta">
+        <span class="meta-chip">📚 Built from your notes</span>
+        <span class="meta-chip">⏱ ~45 min full pass</span>
+        <span class="meta-chip">🎯 15 quiz questions</span>
+      </div>
+      <p class="lead">
+        This guide is built to get you fully caught up on food webs, energy flow, populations, and invasive species in one focused sitting. Every concept is explained, illustrated, and tested. No fluff. <strong>Tap things. They do stuff.</strong>
+      </p>
+      <a href="#levels" class="hero-cta">Begin the journey</a>
+    </div>
+    <div class="hero-illustration">
+      <svg viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;">
+        <!-- sun -->
+        <circle cx="320" cy="80" r="38" fill="var(--sun)"/>
+        <g stroke="var(--sun)" stroke-width="3" stroke-linecap="round">
+          <line x1="320" y1="20" x2="320" y2="35"/>
+          <line x1="380" y1="80" x2="365" y2="80"/>
+          <line x1="362" y1="38" x2="352" y2="48"/>
+          <line x1="362" y1="122" x2="352" y2="112"/>
+          <line x1="278" y1="38" x2="288" y2="48"/>
+        </g>
+        <!-- ground -->
+        <path d="M0,360 Q100,340 200,355 T400,348 L400,420 L0,420 Z" fill="var(--soil)"/>
+        <path d="M0,348 Q100,328 200,343 T400,336 L400,360 L0,360 Z" fill="var(--leaf)"/>
+        <!-- tree -->
+        <rect x="55" y="240" width="20" height="120" fill="var(--soil)"/>
+        <circle cx="65" cy="220" r="55" fill="var(--leaf)"/>
+        <circle cx="40" cy="240" r="38" fill="#5a8e48"/>
+        <circle cx="90" cy="240" r="40" fill="#5a8e48"/>
+        <circle cx="65" cy="195" r="35" fill="#7ba868"/>
+        <!-- grass tufts -->
+        <g fill="var(--leaf)">
+          <path d="M150,348 L148,330 L153,348 Z M155,348 L155,328 L160,348 Z M160,348 L162,335 L165,348 Z"/>
+          <path d="M250,348 L248,332 L253,348 Z M255,348 L255,330 L260,348 Z"/>
+          <path d="M340,344 L338,328 L343,344 Z M345,344 L345,326 L350,344 Z"/>
+        </g>
+        <!-- rabbit -->
+        <g transform="translate(180,310)">
+          <ellipse cx="20" cy="20" rx="22" ry="14" fill="#d4c5b0"/>
+          <circle cx="35" cy="15" r="9" fill="#d4c5b0"/>
+          <ellipse cx="33" cy="6" rx="3" ry="8" fill="#d4c5b0"/>
+          <ellipse cx="37" cy="6" rx="3" ry="8" fill="#d4c5b0"/>
+          <circle cx="38" cy="14" r="1.5" fill="var(--moss-deep)"/>
+          <circle cx="2" cy="22" r="4" fill="white"/>
+        </g>
+        <!-- fox -->
+        <g transform="translate(280,295)">
+          <ellipse cx="25" cy="25" rx="28" ry="15" fill="var(--clay)"/>
+          <path d="M50,30 L70,15 L65,32 Z" fill="var(--clay)"/>
+          <circle cx="48" cy="18" r="11" fill="var(--clay)"/>
+          <path d="M40,12 L42,5 L46,12 Z" fill="var(--clay)"/>
+          <path d="M52,12 L54,5 L58,12 Z" fill="var(--clay)"/>
+          <circle cx="52" cy="18" r="1.5" fill="var(--moss-deep)"/>
+          <path d="M48,22 L51,24 L48,26 Z" fill="var(--moss-deep)"/>
+          <ellipse cx="68" cy="28" rx="6" ry="3" fill="white" transform="rotate(20 68 28)"/>
+        </g>
+        <!-- hawk silhouette -->
+        <g transform="translate(220,120)" fill="var(--moss-deep)">
+          <path d="M0,15 Q30,0 60,15 Q45,8 30,15 Q15,8 0,15 Z"/>
+          <ellipse cx="30" cy="15" rx="6" ry="3"/>
+        </g>
+        <!-- mushroom -->
+        <g transform="translate(120,335)">
+          <rect x="6" y="8" width="6" height="14" fill="#f0e8d0"/>
+          <ellipse cx="9" cy="8" rx="11" ry="6" fill="var(--clay)"/>
+          <circle cx="5" cy="6" r="1.5" fill="white"/>
+          <circle cx="12" cy="7" r="1.2" fill="white"/>
+        </g>
+        <!-- cute insect -->
+        <g transform="translate(385,335)">
+          <circle cx="0" cy="0" r="4" fill="var(--moss-deep)"/>
+          <circle cx="-2" cy="-1" r="0.8" fill="var(--sun)"/>
+          <circle cx="2" cy="-1" r="0.8" fill="var(--sun)"/>
+          <line x1="-1" y1="-3" x2="-2" y2="-6" stroke="var(--moss-deep)" stroke-width="0.8"/>
+          <line x1="1" y1="-3" x2="2" y2="-6" stroke="var(--moss-deep)" stroke-width="0.8"/>
+        </g>
+        <!-- arrows showing energy flow -->
+        <g stroke="var(--sun)" stroke-width="2.5" fill="none" opacity="0.55" stroke-dasharray="4 3">
+          <path d="M310,115 Q200,180 100,200" marker-end="url(#arr)"/>
+          <path d="M115,260 Q150,295 195,310" marker-end="url(#arr)"/>
+          <path d="M225,310 Q260,300 290,300" marker-end="url(#arr)"/>
+          <path d="M310,290 Q280,200 245,140" marker-end="url(#arr)"/>
+        </g>
+        <defs>
+          <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+            <path d="M0,0 L10,5 L0,10 z" fill="var(--sun)"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+ 
+  <!-- SPACE Framework Card -->
+  <div class="space-card">
+    <div class="space-title">⚘ The SPACE Method · How to actually use this guide</div>
+    <p style="font-size:14px; color:var(--moss); margin-bottom:16px;">
+      Five phases that mirror how your brain actually learns. Don't just read straight through — work each phase. Click a letter for what to do.
+    </p>
+    <div class="space-letters" id="spaceLetters">
+      <div class="space-letter" data-letter="S" data-text="<strong>SURVEY.</strong> Skim the section first — read just the section tags, headings, and bold words. Get the lay of the land before diving in. Pre-loading structure boosts retention by ~40%.">
+        <div class="space-letter-letter">S</div>
+        <div class="space-letter-name">Survey</div>
+      </div>
+      <div class="space-letter" data-letter="P" data-text="<strong>PROCESS.</strong> Slow down and engage every interactive element — click pyramid tiers, flip flashcards, drag the food web. Active processing beats passive re-reading every time.">
+        <div class="space-letter-letter">P</div>
+        <div class="space-letter-name">Process</div>
+      </div>
+      <div class="space-letter" data-letter="A" data-text="<strong>APPLY.</strong> For each concept, ask: 'Where does this show up in real life?' Carrying capacity? Why deer overpopulate. Trophic levels? Why apex predators are rare. This is the phase most students skip — and why they bomb essay questions.">
+        <div class="space-letter-letter">A</div>
+        <div class="space-letter-name">Apply</div>
+      </div>
+      <div class="space-letter" data-letter="C" data-text="<strong>CHECK.</strong> Take the quiz at the end. Without notes. The discomfort of <em>not knowing</em> is literally the moment your brain forms the memory. Retrieval practice is the most evidence-backed study method on Earth.">
+        <div class="space-letter-letter">C</div>
+        <div class="space-letter-name">Check</div>
+      </div>
+      <div class="space-letter" data-letter="E" data-text="<strong>ECHO.</strong> Come back tomorrow. Then in 3 days. Then in a week. Each return cements the memory. This is the one that separates students who ace finals from those who only ace midterms.">
+        <div class="space-letter-letter">E</div>
+        <div class="space-letter-name">Echo</div>
+      </div>
+    </div>
+    <div class="space-detail" id="spaceDetail"></div>
+  </div>
+</div>
+ 
+<!-- ============ LEVELS OF ORGANIZATION ============ -->
+<section class="levels-section" id="levels">
+  <div class="container">
+    <div class="section-tag">Chapter 01 · Levels of Organization</div>
+    <h2>From one bug<br/>to the <em>whole biome.</em></h2>
+    <p class="lead">Ecologists zoom in and out. The same forest can be studied at five different "levels" — from a single squirrel to the entire deciduous forest biome. Click through them in order and watch the camera pull back.</p>
+ 
+    <div class="levels-container">
+      <div class="levels-list" id="levelsList">
+        <button class="level-btn active" data-level="0"><span class="num">1</span> Organism</button>
+        <button class="level-btn" data-level="1"><span class="num">2</span> Population</button>
+        <button class="level-btn" data-level="2"><span class="num">3</span> Community</button>
+        <button class="level-btn" data-level="3"><span class="num">4</span> Ecosystem</button>
+        <button class="level-btn" data-level="4"><span class="num">5</span> Biome</button>
+      </div>
+      <div class="level-display" id="levelDisplay">
+        <!-- populated by JS -->
+      </div>
+    </div>
+ 
+    <div class="mnemonic-box">
+      <h4>⚘ Memorize the order</h4>
+      <div class="mnemonic-text">
+        "<span>O</span>nly <span>P</span>ros <span>C</span>an <span>E</span>at <span>B</span>urgers"<br/>
+        <span style="font-size:14px; opacity:0.8;">Organism → Population → Community → Ecosystem → Biome</span>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ============ ENERGY PYRAMID ============ -->
+<section class="energy-section" id="energy">
+  <div class="container">
+    <div class="section-tag">Chapter 02 · Energy Flow</div>
+    <h2>The <em>10% Rule</em><br/>(why apex predators are rare)</h2>
+    <p class="lead">Energy enters the ecosystem through the sun, gets captured by plants, and then leaks out as heat at every step up the food chain. By the time you reach the top, only a sliver remains. Click any tier of the pyramid.</p>
+ 
+    <div class="pyramid-grid">
+      <div class="pyramid-svg-wrap">
+        <svg class="pyramid-svg" viewBox="0 0 400 380" xmlns="http://www.w3.org/2000/svg">
+          <!-- sun rays -->
+          <g opacity="0.3">
+            <line x1="20" y1="20" x2="60" y2="60" stroke="var(--sun)" stroke-width="2"/>
+            <line x1="40" y1="10" x2="60" y2="50" stroke="var(--sun)" stroke-width="2"/>
+            <circle cx="30" cy="30" r="20" fill="var(--sun)"/>
+          </g>
+          <!-- Tier 5: Tertiary (top) -->
+          <g class="pyramid-tier" data-tier="5">
+            <polygon points="200,20 230,70 170,70" fill="#9a3d2a"/>
+            <text x="200" y="55" text-anchor="middle" fill="white" font-family="DM Sans" font-size="11" font-weight="700">HAWK</text>
+            <text x="200" y="42" text-anchor="middle" font-size="22">🦅</text>
+          </g>
+          <!-- Tier 4: Secondary -->
+          <g class="pyramid-tier" data-tier="4">
+            <polygon points="170,70 230,70 250,130 150,130" fill="var(--clay)"/>
+            <text x="200" y="115" text-anchor="middle" fill="white" font-family="DM Sans" font-size="12" font-weight="700">SNAKE</text>
+            <text x="200" y="98" text-anchor="middle" font-size="22">🐍</text>
+          </g>
+          <!-- Tier 3 -->
+          <g class="pyramid-tier" data-tier="3">
+            <polygon points="150,130 250,130 280,200 120,200" fill="var(--sun-deep)"/>
+            <text x="200" y="185" text-anchor="middle" fill="white" font-family="DM Sans" font-size="13" font-weight="700">FROG</text>
+            <text x="200" y="165" text-anchor="middle" font-size="24">🐸</text>
+          </g>
+          <!-- Tier 2 -->
+          <g class="pyramid-tier" data-tier="2">
+            <polygon points="120,200 280,200 320,280 80,280" fill="var(--sun)"/>
+            <text x="200" y="265" text-anchor="middle" fill="var(--moss-deep)" font-family="DM Sans" font-size="14" font-weight="700">GRASSHOPPER</text>
+            <text x="200" y="240" text-anchor="middle" font-size="28">🦗</text>
+          </g>
+          <!-- Tier 1 (bottom, biggest) -->
+          <g class="pyramid-tier active" data-tier="1">
+            <polygon points="80,280 320,280 360,360 40,360" fill="var(--leaf)"/>
+            <text x="200" y="345" text-anchor="middle" fill="white" font-family="DM Sans" font-size="15" font-weight="700">GRASS (PRODUCER)</text>
+            <text x="200" y="318" text-anchor="middle" font-size="32">🌱</text>
+          </g>
+          <!-- side label -->
+          <g transform="translate(15, 200) rotate(-90)">
+            <text font-family="JetBrains Mono" font-size="10" fill="var(--moss)" letter-spacing="2">ENERGY AVAILABLE →</text>
+          </g>
+          <!-- arrow up -->
+          <line x1="380" y1="350" x2="380" y2="40" stroke="var(--moss-deep)" stroke-width="1.5" marker-end="url(#arrUp)"/>
+          <text x="385" y="200" font-family="JetBrains Mono" font-size="9" fill="var(--moss)">LESS</text>
+          <text x="385" y="340" font-family="JetBrains Mono" font-size="9" fill="var(--moss)">MORE</text>
+          <defs>
+            <marker id="arrUp" viewBox="0 0 10 10" refX="5" refY="0" markerWidth="6" markerHeight="6" orient="auto">
+              <path d="M0,10 L5,0 L10,10 z" fill="var(--moss-deep)"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+ 
+      <div>
+        <div class="energy-info" id="energyInfo">
+          <!-- populated by JS -->
+        </div>
+        <div class="ten-percent">
+          <h4>⚡ The Ten Percent Rule</h4>
+          <p>Only about <strong>10% of energy</strong> at one trophic level passes up to the next. The other 90% becomes <strong>heat lost to the environment</strong>, gets used for movement, growth, or stays in waste. That's why the pyramid <em>has to</em> be a pyramid — there literally isn't enough energy to support more apex predators.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ============ FOOD WEB ============ -->
+<section class="web-section" id="web">
+  <div class="container">
+    <div class="section-tag">Chapter 03 · Food Webs</div>
+    <h2>A web, not a chain.<br/><em>Click any organism.</em></h2>
+    <p class="lead">A food chain is a single line: grass → mouse → snake → hawk. But real ecosystems aren't lines — they're tangled webs where everything eats multiple things. Tap an organism below to highlight what it <span style="color:#6ab04c;font-weight:700">eats</span> and what <span style="color:var(--clay);font-weight:700">eats it</span>.</p>
+ 
+    <div class="web-controls">
+      <button class="web-btn active" data-mode="explore">🔍 Explore mode</button>
+      <button class="web-btn" data-mode="reset">↻ Reset highlights</button>
+    </div>
+ 
+    <div class="web-canvas-wrap">
+      <svg class="web-svg" viewBox="0 0 700 500" xmlns="http://www.w3.org/2000/svg" id="webSvg">
+        <!-- arrows layer (drawn first so they sit behind) -->
+        <g id="webArrows" stroke="var(--moss)" stroke-width="1.2" fill="none" opacity="0.35"></g>
+ 
+        <!-- producer band -->
+        <rect x="0" y="430" width="700" height="70" fill="var(--leaf)" opacity="0.18"/>
+        <text x="350" y="475" text-anchor="middle" font-family="JetBrains Mono" font-size="11" fill="var(--moss)" letter-spacing="3">PLANTS · PRODUCERS · LEVEL 1</text>
+ 
+        <!-- nodes will be appended via JS -->
+        <g id="webNodes"></g>
+      </svg>
+    </div>
+ 
+    <div class="web-info" id="webInfo">
+      <div class="web-info-title">👆 Click any organism above</div>
+      <div style="font-size:14px; color:var(--moss);">Tip: notice how the arrows always point in the direction of <strong>energy flow</strong> — from the eaten to the eater.</div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ============ VOCAB ============ -->
+<section class="vocab-section" id="vocab">
+  <div class="container">
+    <div class="section-tag">Chapter 04 · Vocabulary Vault</div>
+    <h2>The terms you'll<br/><em>actually be tested on.</em></h2>
+    <p class="lead">Click any card to flip it. Color-coded by topic. The single fastest way to lock these in: cover the back with your hand, read the term, try to recite the definition out loud, then flip and check. Three passes is enough.</p>
+ 
+    <div class="vocab-filter">
+      <span>Filter:</span>
+      <button class="web-btn active" data-cat="all">All</button>
+      <button class="web-btn" data-cat="energy" style="border-top:3px solid var(--sun)">⚡ Energy</button>
+      <button class="web-btn" data-cat="org" style="border-top:3px solid var(--leaf)">🌍 Organization</button>
+      <button class="web-btn" data-cat="pop" style="border-top:3px solid var(--sky)">📊 Population</button>
+      <button class="web-btn" data-cat="invasive" style="border-top:3px solid var(--clay)">⚠ Invasive</button>
+    </div>
+ 
+    <div class="flashcard-grid" id="flashGrid"></div>
+  </div>
+</section>
+ 
+<!-- ============ POPULATION ============ -->
+<section class="pop-section" id="population">
+  <div class="container">
+    <div class="section-tag">Chapter 05 · Population Dynamics</div>
+    <h2>Why populations<br/><em>grow, shrink, and crash.</em></h2>
+    <p class="lead">Populations aren't static. Births add. Deaths subtract. Animals immigrate in. Animals emigrate out. And there's always a ceiling — the carrying capacity — past which the environment just can't sustain everyone. Tap the buttons to mess with the simulation.</p>
+ 
+    <div class="pop-grid">
+      <div class="pop-sim">
+        <canvas id="popCanvas" width="600" height="280"></canvas>
+        <div class="pop-readout">
+          <div class="readout-cell">
+            <div class="label">Population</div>
+            <div class="num" id="statPop">0</div>
+          </div>
+          <div class="readout-cell">
+            <div class="label">Capacity</div>
+            <div class="num" id="statCap">25</div>
+          </div>
+          <div class="readout-cell">
+            <div class="label">Status</div>
+            <div class="num" id="statStatus" style="font-size:16px; font-family:var(--font-mono); padding-top:8px;">STABLE</div>
+          </div>
+        </div>
+        <div class="pop-controls">
+          <button class="add">+ Birth</button>
+          <button class="imm">→ Immigrate</button>
+          <button class="emm">← Emigrate</button>
+          <button class="dth">✕ Death</button>
+          <button class="rst">↻ Reset population</button>
+        </div>
+      </div>
+      <div class="pop-glossary">
+        <div class="pop-term">
+          <div class="name"><span class="icon" style="background:var(--sage-light)">📐</span>Population Size</div>
+          <div class="def">The total number of individuals in a population.</div>
+        </div>
+        <div class="pop-term">
+          <div class="name"><span class="icon" style="background:var(--sage-light)">📊</span>Population Density</div>
+          <div class="def">Number of individuals per unit area. (50 deer in 1 km² = high density.)</div>
+        </div>
+        <div class="pop-term">
+          <div class="name"><span class="icon" style="background:#a8d8a8">→</span>Immigration</div>
+          <div class="def">Organisms <strong>moving INTO</strong> an area. Think: <em>imm</em>igration = <em>im</em>port.</div>
+        </div>
+        <div class="pop-term">
+          <div class="name"><span class="icon" style="background:#f4d094">←</span>Emigration</div>
+          <div class="def">Organisms <strong>moving OUT</strong> of an area. Think: <em>e</em>migration = <em>e</em>xit.</div>
+        </div>
+        <div class="pop-term">
+          <div class="name"><span class="icon" style="background:#b8d4f0">👶</span>Birth Rate</div>
+          <div class="def">Rate at which new individuals are born — adds to the population.</div>
+        </div>
+        <div class="pop-term">
+          <div class="name"><span class="icon" style="background:#f0b8b8">💀</span>Death Rate</div>
+          <div class="def">Rate at which individuals die — shrinks the population.</div>
+        </div>
+        <div class="pop-term">
+          <div class="name"><span class="icon" style="background:var(--sun)">🚧</span>Carrying Capacity</div>
+          <div class="def">The <strong>max population</strong> an environment can support long-term — limited by food, water, space, and shelter.</div>
+        </div>
+        <div class="pop-term">
+          <div class="name"><span class="icon" style="background:var(--clay-deep);color:white">⚖</span>Limiting Factors</div>
+          <div class="def">Anything (biotic OR abiotic) that caps growth: climate, food, water, space, shelter, predators.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ============ INVASIVE ============ -->
+<section class="invasive-section" id="invasive">
+  <div class="container">
+    <div class="section-tag">Chapter 06 · Invasive Species</div>
+    <h2>The new arrivals<br/><em>that ruin everything.</em></h2>
+    <p class="lead">An <strong>invasive species</strong> is a non-native organism that, once introduced, harms its new environment — usually by out-competing native species, lowering carrying capacity, and unbalancing the food web. The fix? Three flavors of control.</p>
+ 
+    <div class="invasive-warning">
+      <div class="warning-icon">⚠</div>
+      <div>
+        <h3>What makes an invasive species so dangerous?</h3>
+        <p>They have <strong>no natural predators</strong> in the new ecosystem, so their population grows uncontrolled. They <strong>outcompete native species</strong> for food, water, and space — driving down the carrying capacity for everyone else. Native species get crowded out or pushed to extinction.</p>
+      </div>
+    </div>
+ 
+    <div class="controls-grid">
+      <div class="control-card physical">
+        <div class="badge">Method 1</div>
+        <div class="icon-area">✋</div>
+        <h4>Physical Control</h4>
+        <p class="what">Humans physically remove the invasive species — by hand, with tools, or with traps. Slow but precise.</p>
+        <div class="examples-title">Examples</div>
+        <ul>
+          <li>Volunteers pulling kudzu vines</li>
+          <li>Scuba divers spearing lionfish</li>
+          <li>Trapping feral hogs</li>
+        </ul>
+      </div>
+ 
+      <div class="control-card chemical">
+        <div class="badge">Method 2</div>
+        <div class="icon-area">⚗</div>
+        <h4>Chemical Control</h4>
+        <p class="what">Pesticides, herbicides, or other chemicals are applied to kill the invasive species. Fast, but can harm non-target species.</p>
+        <div class="examples-title">Examples</div>
+        <ul>
+          <li>Herbicides on crested floating heart</li>
+          <li>Insecticides on emerald ash borer</li>
+          <li>Aquatic herbicides on hydrilla</li>
+        </ul>
+      </div>
+ 
+      <div class="control-card biological">
+        <div class="badge">Method 3</div>
+        <div class="icon-area">🐟</div>
+        <h4>Biological Control</h4>
+        <p class="what">Use a <em>living organism</em> — usually a natural predator or competitor — to control the invasive. Long-lasting if it works, risky if the helper itself becomes invasive.</p>
+        <div class="examples-title">Examples</div>
+        <ul>
+          <li>Sterile grass carp eating hydrilla</li>
+          <li>Ladybugs released to eat aphids</li>
+          <li>Cane toads (a famous failure!)</li>
+        </ul>
+      </div>
+    </div>
+ 
+    <div class="mnemonic-box" style="margin-top:32px;">
+      <h4>⚘ Three control types — one trick to remember</h4>
+      <div class="mnemonic-text">
+        <span>P</span>hysical = you do it. <span>C</span>hemical = chemicals do it. <span>B</span>iological = a creature does it.
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<!-- ============ QUIZ ============ -->
+<section class="quiz-section" id="quiz">
+  <div class="container">
+    <div class="section-tag">Chapter 07 · Test Yourself</div>
+    <h2>15 questions.<br/>The <em>real test</em>.</h2>
+    <p class="lead">These are the actual questions from your study quiz. The discomfort you feel trying to remember is literally your brain forming the memory. Don't peek. Get it wrong, learn from the explanation, move on.</p>
+ 
+    <div class="quiz-intro" id="quizIntro">
+      <h3>Ready?</h3>
+      <p>15 multiple-choice questions covering everything you just studied. Each one has an explanation when you answer. Your score gets saved between sessions.</p>
+      <button class="quiz-start" id="quizStart">Start the quiz →</button>
+    </div>
+ 
+    <div class="quiz-card" id="quizCard">
+      <div class="quiz-progress">
+        <div class="quiz-counter" id="quizCounter">QUESTION 1 OF 15</div>
+        <div class="quiz-bar"><div class="quiz-bar-fill" id="quizBar" style="width:0%"></div></div>
+        <div class="quiz-counter" id="quizScore">0 ✓</div>
+      </div>
+      <div class="quiz-question" id="quizQ"></div>
+      <div class="quiz-image" id="quizImg"></div>
+      <div class="quiz-options" id="quizOpts"></div>
+      <div class="quiz-explain" id="quizExp">
+        <div class="verdict" id="quizVerdict"></div>
+        <p id="quizExpText"></p>
+      </div>
+      <button class="quiz-next" id="quizNext">Next question</button>
+    </div>
+  </div>
+</section>
+ 
+<!-- ============ CHEAT SHEET ============ -->
+<section class="cheat-section">
+  <div class="container">
+    <div class="cheat-card">
+      <h3>The Last-Minute Cheat Sheet</h3>
+      <div class="sub">Five minutes before the test. Read this once.</div>
+      <div class="cheat-grid">
+        <div class="cheat-item">
+          <h4>Levels of Organization</h4>
+          <p><strong>Organism → Population → Community → Ecosystem → Biome.</strong> Population = same species. Community = different species together. Ecosystem = community + abiotic factors (water, sunlight, soil).</p>
+        </div>
+        <div class="cheat-item">
+          <h4>The Energy Pyramid</h4>
+          <p>Bottom (Producer) has the <strong>MOST energy</strong>. Each level up loses 90%. Only ~10% transfers. That's why apex predators are rare.</p>
+        </div>
+        <div class="cheat-item">
+          <h4>Food Chain vs Web</h4>
+          <p><strong>Chain:</strong> single line. <strong>Web:</strong> overlapping chains. Arrows point in the direction of energy flow — from prey to predator.</p>
+        </div>
+        <div class="cheat-item">
+          <h4>Producers vs Consumers</h4>
+          <p><strong>Producers</strong> make their own food (plants, sunlight). <strong>Primary</strong> consumers eat producers. <strong>Secondary</strong> eat primary. <strong>Tertiary</strong> eat secondary. Decomposers break down the dead.</p>
+        </div>
+        <div class="cheat-item">
+          <h4>Population Words</h4>
+          <p><strong>Imm</strong>igrate = IN. <strong>Em</strong>igrate = OUT. <strong>Carrying capacity</strong> = max sustainable population. <strong>Limiting factors</strong> = anything that caps growth.</p>
+        </div>
+        <div class="cheat-item">
+          <h4>Invasive Controls</h4>
+          <p><strong>Physical</strong> = humans remove (pulling, spearing). <strong>Chemical</strong> = sprays/herbicides. <strong>Biological</strong> = a living predator/competitor.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+ 
+<footer>
+  ⚘ The Living World · A field guide built from your notes · Spaced repetition is real — come back tomorrow.
+</footer>
+ 
+<script>
+/* ============ STORAGE WRAPPER ============ */
+const store = {
+  async get(key) {
+    try { const r = await window.storage.get(key); return r ? JSON.parse(r.value) : null; }
+    catch { return null; }
+  },
+  async set(key, val) {
+    try { await window.storage.set(key, JSON.stringify(val)); } catch {}
+  }
+};
+ 
+/* ============ SPACE FRAMEWORK ============ */
+document.querySelectorAll('.space-letter').forEach(el => {
+  el.addEventListener('click', () => {
+    const detail = document.getElementById('spaceDetail');
+    detail.innerHTML = el.dataset.text;
+    detail.classList.add('active');
+  });
+});
+ 
+/* ============ LEVELS OF ORGANIZATION ============ */
+const levels = [
+  {
+    name: 'Organism',
+    sub: 'Level 1 · One individual',
+    def: 'A single living thing — one rabbit, one oak tree, one bacterium. The fundamental unit of life. Anything below this level (cells, organs) isn\'t studied at the ecosystem scale.',
+    example: 'One gray squirrel chewing on an acorn in your backyard.',
+    illu: '🐿'
+  },
+  {
+    name: 'Population',
+    sub: 'Level 2 · Same species, same place',
+    def: 'All the individuals of <strong>one single species</strong> living in a specific area at a specific time. The key word is "ONE species."',
+    example: 'All the gray squirrels in your neighborhood park. Just gray squirrels — no birds, no chipmunks.',
+    illu: '🐿🐿🐿'
+  },
+  {
+    name: 'Community',
+    sub: 'Level 3 · All living things together',
+    def: 'All the <strong>different populations</strong> of organisms living and interacting in a specific area. Think: <em>everything alive</em> in one spot.',
+    example: 'At the beach: all the crabs + all the seagulls + all the sea grass + all the fish, interacting together.',
+    illu: '🦀🐦🌾🦞'
+  },
+  {
+    name: 'Ecosystem',
+    sub: 'Level 4 · Living + non-living',
+    def: 'A community PLUS all the <strong>abiotic (non-living) factors</strong> — water, sunlight, oxygen, temperature, soil, rocks. The community PLUS its physical environment.',
+    example: 'A pond ecosystem: all the fish, plants, frogs (community) + the water, sunlight, mud, rocks (abiotic).',
+    illu: '🏞'
+  },
+  {
+    name: 'Biome',
+    sub: 'Level 5 · The biggest scale',
+    def: 'A huge geographical area with characteristic climate, plants, and animals. Multiple ecosystems sharing similar conditions across continents.',
+    example: 'The tropical rainforest biome — found in South America, Africa, Asia. The Sahara desert biome. The arctic tundra.',
+    illu: '🌍'
+  }
+];
+ 
+const levelDisplay = document.getElementById('levelDisplay');
+function showLevel(idx) {
+  const l = levels[idx];
+  levelDisplay.innerHTML = `
+    <div class="level-illustration" style="font-size: 200px; line-height: 1; padding: 30px;">${l.illu}</div>
+    <div class="level-display-content">
+      <div class="subtitle">${l.sub}</div>
+      <h3>${l.name}</h3>
+      <div class="definition">${l.def}</div>
+      <div class="example"><strong>Real example</strong>${l.example}</div>
+    </div>
+  `;
+}
+showLevel(0);
+document.querySelectorAll('.level-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    showLevel(parseInt(btn.dataset.level));
+  });
+});
+ 
+/* ============ ENERGY PYRAMID ============ */
+const tiers = {
+  1: { name: 'Producer', sub: 'Tier 1 · Trophic Level 1', energy: '100', desc: 'Plants and algae. They make their own food from sunlight via photosynthesis. <strong>This level holds the most energy</strong> in the entire ecosystem because energy enters here.', examples: ['🌱 Grass', '🌳 Trees', '🌿 Algae', '🌾 Wheat'], color: 'var(--leaf)' },
+  2: { name: 'Primary Consumer (Herbivore)', sub: 'Tier 2 · Trophic Level 2', energy: '10', desc: 'Animals that eat producers directly. Also called <strong>herbivores</strong>. They get energy from plants but lose 90% of it as heat.', examples: ['🦗 Grasshopper', '🐰 Rabbit', '🐄 Cow', '🦌 Deer'], color: 'var(--sun)' },
+  3: { name: 'Secondary Consumer', sub: 'Tier 3 · Trophic Level 3', energy: '1', desc: 'Eats primary consumers. Often a <strong>carnivore</strong> (meat eater). Has only 1% of the original energy from producers.', examples: ['🐸 Frog', '🐍 Small snakes', '🦔 Hedgehog', '🐦 Songbird'], color: 'var(--sun-deep)' },
+  4: { name: 'Tertiary Consumer', sub: 'Tier 4 · Trophic Level 4', energy: '0.1', desc: 'Eats secondary consumers. Carnivore higher up the chain. Tiny fraction of the original energy.', examples: ['🐍 Snake', '🦊 Fox', '🦅 Small hawks'], color: 'var(--clay)' },
+  5: { name: 'Apex Predator', sub: 'Tier 5 · Top of the chain', energy: '0.01', desc: 'The top consumer. <strong>No natural predators</strong>. Sits at the top because so little energy reaches here that very few can survive at this level.', examples: ['🦅 Hawk', '🦁 Lion', '🐺 Wolf', '🦈 Shark'], color: 'var(--clay-deep)' }
+};
+ 
+const energyInfo = document.getElementById('energyInfo');
+function showTier(n) {
+  const t = tiers[n];
+  energyInfo.innerHTML = `
+    <div class="energy-info-tier">${t.sub}</div>
+    <h3>${t.name}</h3>
+    <div class="energy-stat">
+      <div class="num">${t.energy}${n === 5 || n === 4 ? '' : '%'}</div>
+      <div class="unit">${n === 5 ? '% of original energy' : n === 4 ? '% of original energy' : 'of total energy'}</div>
+    </div>
+    <div class="desc">${t.desc}</div>
+    <div class="examples">${t.examples.map(e => `<span>${e}</span>`).join('')}</div>
+  `;
+}
+showTier(1);
+document.querySelectorAll('.pyramid-tier').forEach(tier => {
+  tier.addEventListener('click', () => {
+    document.querySelectorAll('.pyramid-tier').forEach(t => t.classList.remove('active'));
+    tier.classList.add('active');
+    showTier(parseInt(tier.dataset.tier));
+  });
+});
+ 
+/* ============ FOOD WEB ============ */
+const organisms = [
+  // [id, name, emoji, x, y, role, eats[], eatenBy[]]
+  { id: 'plants', name: 'Plants', emoji: '🌿', x: 350, y: 460, role: 'Producer · Trophic Level 1', eats: [], eatenBy: ['rabbits','squirrels','mice','seedBirds','herbInsects'] },
+  { id: 'rabbits', name: 'Rabbits', emoji: '🐰', x: 70, y: 360, role: 'Primary Consumer · Herbivore', eats: ['plants'], eatenBy: ['foxes','hawks'] },
+  { id: 'squirrels', name: 'Squirrels', emoji: '🐿', x: 175, y: 360, role: 'Primary Consumer · Herbivore', eats: ['plants'], eatenBy: ['foxes','hawks','snakes'] },
+  { id: 'mice', name: 'Mice', emoji: '🐭', x: 280, y: 360, role: 'Primary Consumer · Herbivore', eats: ['plants'], eatenBy: ['foxes','hawks','snakes'] },
+  { id: 'seedBirds', name: 'Seed-eating birds', emoji: '🐦', x: 380, y: 360, role: 'Primary Consumer · Granivore', eats: ['plants'], eatenBy: ['hawks','foxes','snakes'] },
+  { id: 'herbInsects', name: 'Herbivorous insects', emoji: '🐛', x: 540, y: 360, role: 'Primary Consumer · Herbivore', eats: ['plants'], eatenBy: ['spiders','toads','insectBirds','predInsects'] },
+  { id: 'spiders', name: 'Spiders', emoji: '🕷', x: 420, y: 270, role: 'Secondary Consumer · Carnivore', eats: ['herbInsects'], eatenBy: ['insectBirds','toads'] },
+  { id: 'predInsects', name: 'Predaceous insects', emoji: '🪲', x: 615, y: 360, role: 'Secondary Consumer · Carnivore', eats: ['herbInsects'], eatenBy: ['toads','insectBirds','snakes'] },
+  { id: 'insectBirds', name: 'Insectivorous birds', emoji: '🐦', x: 470, y: 200, role: 'Secondary Consumer · Carnivore', eats: ['spiders','herbInsects','predInsects'], eatenBy: ['hawks','snakes','foxes'] },
+  { id: 'toads', name: 'Toads', emoji: '🐸', x: 620, y: 250, role: 'Secondary Consumer · Carnivore', eats: ['spiders','herbInsects','predInsects'], eatenBy: ['snakes','hawks'] },
+  { id: 'snakes', name: 'Snakes', emoji: '🐍', x: 580, y: 110, role: 'Tertiary Consumer · Carnivore', eats: ['mice','squirrels','seedBirds','toads','insectBirds','predInsects'], eatenBy: ['hawks'] },
+  { id: 'foxes', name: 'Foxes', emoji: '🦊', x: 90, y: 200, role: 'Tertiary Consumer · Carnivore', eats: ['rabbits','squirrels','mice','seedBirds','insectBirds'], eatenBy: ['hawks'] },
+  { id: 'hawks', name: 'Hawks & owls', emoji: '🦅', x: 280, y: 90, role: 'Apex Predator · No natural predators', eats: ['rabbits','squirrels','mice','seedBirds','insectBirds','snakes','toads','foxes'], eatenBy: [] }
+];
+ 
+const orgMap = Object.fromEntries(organisms.map(o => [o.id, o]));
+const webNodes = document.getElementById('webNodes');
+const webArrows = document.getElementById('webArrows');
+const webInfo = document.getElementById('webInfo');
+ 
+// draw arrows for all relationships
+organisms.forEach(o => {
+  o.eats.forEach(prey => {
+    const p = orgMap[prey];
+    const path = document.createElementNS('http://www.w3.org/2000/svg','line');
+    path.setAttribute('x1', p.x);
+    path.setAttribute('y1', p.y - 10);
+    path.setAttribute('x2', o.x);
+    path.setAttribute('y2', o.y + 10);
+    path.setAttribute('data-from', prey);
+    path.setAttribute('data-to', o.id);
+    webArrows.appendChild(path);
+  });
+});
+ 
+// draw nodes
+organisms.forEach(o => {
+  const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+  g.setAttribute('class','organism-node');
+  g.setAttribute('data-id', o.id);
+  g.setAttribute('transform', `translate(${o.x},${o.y})`);
+  g.innerHTML = `
+    <circle class="node-bg" r="26" fill="var(--paper)" stroke="var(--moss)" stroke-width="1.5"/>
+    <text text-anchor="middle" y="6" font-size="22">${o.emoji}</text>
+    <text text-anchor="middle" y="44" font-family="DM Sans" font-size="10" font-weight="700" fill="var(--moss-deep)">${o.name}</text>
+  `;
+  g.addEventListener('click', () => selectOrganism(o.id));
+  webNodes.appendChild(g);
+});
+ 
+function selectOrganism(id) {
+  const o = orgMap[id];
+  document.querySelectorAll('.organism-node').forEach(n => {
+    n.classList.remove('selected','eats','eaten-by','dimmed');
+    if (n.dataset.id === id) n.classList.add('selected');
+    else if (o.eats.includes(n.dataset.id)) n.classList.add('eats');
+    else if (o.eatenBy.includes(n.dataset.id)) n.classList.add('eaten-by');
+    else n.classList.add('dimmed');
+  });
+  // dim arrows not connected
+  document.querySelectorAll('#webArrows line').forEach(l => {
+    const from = l.dataset.from, to = l.dataset.to;
+    if (to === id || from === id) {
+      l.setAttribute('stroke', to === id ? '#6ab04c' : 'var(--clay)');
+      l.setAttribute('stroke-width','3');
+      l.setAttribute('opacity','0.9');
+    } else {
+      l.setAttribute('stroke','var(--moss)');
+      l.setAttribute('stroke-width','1');
+      l.setAttribute('opacity','0.08');
+    }
+  });
+  const eatsList = o.eats.length ? o.eats.map(e => orgMap[e].name).join(', ') : 'Nothing — it makes its own food via photosynthesis!';
+  const eatenList = o.eatenBy.length ? o.eatenBy.map(e => orgMap[e].name).join(', ') : 'Nothing! It\'s an apex predator.';
+  webInfo.innerHTML = `
+    <div class="web-info-title">${o.emoji} ${o.name}</div>
+    <div class="web-info-row"><span class="label role">Role</span><span>${o.role}</span></div>
+    <div class="web-info-row"><span class="label eats">Eats</span><span>${eatsList}</span></div>
+    <div class="web-info-row"><span class="label eaten">Eaten by</span><span>${eatenList}</span></div>
+  `;
+}
+ 
+document.querySelectorAll('.web-btn[data-mode]').forEach(b => {
+  b.addEventListener('click', () => {
+    if (b.dataset.mode === 'reset') {
+      document.querySelectorAll('.organism-node').forEach(n => n.classList.remove('selected','eats','eaten-by','dimmed'));
+      document.querySelectorAll('#webArrows line').forEach(l => {
+        l.setAttribute('stroke','var(--moss)');
+        l.setAttribute('stroke-width','1.2');
+        l.setAttribute('opacity','0.35');
+      });
+      webInfo.innerHTML = `<div class="web-info-title">👆 Click any organism above</div><div style="font-size:14px; color:var(--moss);">Tip: notice how the arrows always point in the direction of <strong>energy flow</strong> — from the eaten to the eater.</div>`;
+    }
+  });
+});
+ 
+/* ============ FLASHCARDS ============ */
+const vocab = [
+  // Energy Flow
+  { cat: 'energy', term: 'Producer', def: 'An organism that makes its own food from sunlight (photosynthesis). Plants and algae. Holds the MOST energy in an ecosystem.' },
+  { cat: 'energy', term: 'Consumer', def: 'An organism that gets its energy by eating other organisms — never by making its own food.' },
+  { cat: 'energy', term: 'Primary Consumer', def: 'Eats producers directly. Same thing as a herbivore. Trophic level 2.' },
+  { cat: 'energy', term: 'Secondary Consumer', def: 'Eats primary consumers. Usually a carnivore. Trophic level 3.' },
+  { cat: 'energy', term: 'Tertiary Consumer', def: 'Eats secondary consumers. Higher carnivore. Trophic level 4.' },
+  { cat: 'energy', term: 'Decomposer', def: 'Gets energy by breaking down the remains of dead organisms. Bacteria, fungi.' },
+  { cat: 'energy', term: 'Trophic Level', def: 'A "step" in the food chain showing where an organism gets its energy. Producers = level 1, herbivores = level 2, etc.' },
+  { cat: 'energy', term: 'Energy Pyramid', def: 'Diagram showing energy available at each trophic level. Decreases by ~90% each step up (the 10% rule).' },
+  { cat: 'energy', term: 'Food Chain', def: 'A simple, single-line model of energy transfer: A → B → C.' },
+  { cat: 'energy', term: 'Food Web', def: 'Multiple food chains overlapping. A more realistic model of an ecosystem.' },
+  { cat: 'energy', term: 'Herbivore', def: 'Eats only plants. Same as a primary consumer.' },
+  { cat: 'energy', term: 'Carnivore', def: 'Eats only meat (other animals). Usually secondary or tertiary consumer.' },
+  { cat: 'energy', term: 'Omnivore', def: 'Eats both plants AND animals. (Like humans.)' },
+  { cat: 'energy', term: 'Predator', def: 'An organism that hunts and eats other organisms.' },
+  { cat: 'energy', term: 'Prey', def: 'An organism that gets hunted and eaten by other organisms.' },
+  { cat: 'energy', term: 'Apex Predator', def: 'A top consumer with NO natural predators. Sits at the top of the energy pyramid.' },
+  // Organization
+  { cat: 'org', term: 'Organism', def: 'One single living thing.' },
+  { cat: 'org', term: 'Population', def: 'All individuals of ONE species in an area at one time.' },
+  { cat: 'org', term: 'Community', def: 'All DIFFERENT populations of organisms in an area. Just the living things.' },
+  { cat: 'org', term: 'Ecosystem', def: 'A community + the abiotic factors (water, sunlight, oxygen, temperature).' },
+  { cat: 'org', term: 'Biome', def: 'A huge geographic region with characteristic climate and life. Multiple similar ecosystems.' },
+  { cat: 'org', term: 'Abiotic Factors', def: 'Non-living parts of an environment: water, sunlight, soil, oxygen, temperature.' },
+  { cat: 'org', term: 'Biotic Factors', def: 'Living parts of an environment: animals, plants, fungi, bacteria.' },
+  // Population
+  { cat: 'pop', term: 'Population Size', def: 'Total number of individuals in a population.' },
+  { cat: 'pop', term: 'Population Density', def: 'Individuals per unit area. (50 deer / 1 km²)' },
+  { cat: 'pop', term: 'Immigration', def: 'Organisms moving INTO an area. (imm = im-port)' },
+  { cat: 'pop', term: 'Emigration', def: 'Organisms moving OUT of an area. (e = exit)' },
+  { cat: 'pop', term: 'Birth Rate', def: 'Rate at which new individuals are added to a population.' },
+  { cat: 'pop', term: 'Death Rate', def: 'Rate at which individuals leave by dying.' },
+  { cat: 'pop', term: 'Carrying Capacity', def: 'Max population an area can support long-term — limited by food, water, space, shelter.' },
+  { cat: 'pop', term: 'Limiting Factors', def: 'Anything (biotic or abiotic) that caps population growth.' },
+  // Invasive
+  { cat: 'invasive', term: 'Invasive Species', def: 'A non-native species that NEGATIVELY impacts its new environment.' },
+  { cat: 'invasive', term: 'Native Species', def: 'A species that naturally lives in an area — has been there historically.' },
+  { cat: 'invasive', term: 'Physical Control', def: 'Humans physically remove the invasive species (pulling, trapping, spearing).' },
+  { cat: 'invasive', term: 'Chemical Control', def: 'Using pesticides, herbicides, or other chemicals to kill the invasive.' },
+  { cat: 'invasive', term: 'Biological Control', def: 'Using a living organism (predator, competitor) to control the invasive.' },
+];
+ 
+const flashGrid = document.getElementById('flashGrid');
+function renderFlashcards(filter = 'all') {
+  flashGrid.innerHTML = '';
+  vocab.filter(v => filter === 'all' || v.cat === filter).forEach(v => {
+    const card = document.createElement('div');
+    card.className = `flashcard cat-${v.cat}`;
+    card.innerHTML = `
+      <div class="flashcard-face flashcard-front">
+        <div class="term">${v.term}</div>
+        <div class="hint">tap to flip</div>
+      </div>
+      <div class="flashcard-face flashcard-back">
+        <div class="term-small">${v.term}</div>
+        <div class="def">${v.def}</div>
+      </div>
+    `;
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+    flashGrid.appendChild(card);
+  });
+}
+renderFlashcards();
+document.querySelectorAll('.web-btn[data-cat]').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.web-btn[data-cat]').forEach(x => x.classList.remove('active'));
+    b.classList.add('active');
+    renderFlashcards(b.dataset.cat);
+  });
+});
+ 
+/* ============ POPULATION SIM ============ */
+const popCanvas = document.getElementById('popCanvas');
+const ctx = popCanvas.getContext('2d');
+let dpr = window.devicePixelRatio || 1;
+function resizeCanvas() {
+  const rect = popCanvas.getBoundingClientRect();
+  popCanvas.width = rect.width * dpr;
+  popCanvas.height = rect.height * dpr;
+  ctx.scale(dpr, dpr);
+}
+resizeCanvas();
+window.addEventListener('resize', () => { dpr = window.devicePixelRatio || 1; resizeCanvas(); });
+ 
+const CAPACITY = 25;
+let creatures = [];
+function spawnCreatures(n, type = 'birth') {
+  const rect = popCanvas.getBoundingClientRect();
+  for (let i = 0; i < n; i++) {
+    let x = Math.random() * rect.width;
+    let y = 40 + Math.random() * (rect.height - 60);
+    if (type === 'imm') x = -10; // come in from left
+    creatures.push({
+      x, y,
+      tx: 30 + Math.random() * (rect.width - 60),
+      ty: 40 + Math.random() * (rect.height - 60),
+      v: 0.5 + Math.random() * 0.5,
+      hue: 100 + Math.random() * 60,
+      type
+    });
+  }
+  if (creatures.length > 80) creatures.length = 80;
+  updateStats();
+}
+function removeCreature(type = 'death') {
+  if (!creatures.length) return;
+  const idx = Math.floor(Math.random() * creatures.length);
+  if (type === 'emm') {
+    // mark to leave to the right
+    creatures[idx].leaving = true;
+  } else {
+    creatures[idx].dying = true;
+  }
+}
+function updateStats() {
+  const alive = creatures.filter(c => !c.dying).length;
+  document.getElementById('statPop').textContent = alive;
+  document.getElementById('statCap').textContent = CAPACITY;
+  const status = document.getElementById('statStatus');
+  if (alive === 0) { status.textContent = 'EMPTY'; status.style.color = 'var(--moss)'; }
+  else if (alive > CAPACITY) { status.textContent = 'OVER'; status.style.color = 'var(--clay)'; }
+  else if (alive > CAPACITY * 0.8) { status.textContent = 'NEAR CAP'; status.style.color = 'var(--sun-deep)'; }
+  else { status.textContent = 'STABLE'; status.style.color = 'var(--leaf)'; }
+}
+function drawPop() {
+  const rect = popCanvas.getBoundingClientRect();
+  ctx.clearRect(0, 0, rect.width, rect.height);
+  // capacity line
+  ctx.strokeStyle = 'rgba(200, 85, 61, 0.5)';
+  ctx.setLineDash([4, 4]);
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  // overpopulation indication via background tint
+  const alive = creatures.filter(c => !c.dying && !c.dead).length;
+  if (alive > CAPACITY) {
+    ctx.fillStyle = 'rgba(200,85,61,0.06)';
+    ctx.fillRect(0, 0, rect.width, rect.height);
+  }
+  // capacity marker
+  ctx.font = '11px JetBrains Mono';
+  ctx.fillStyle = 'var(--clay)';
+  ctx.fillStyle = '#9a3d2a';
+  ctx.fillText(`MAX ${CAPACITY}`, rect.width - 60, 18);
+  ctx.beginPath();
+  ctx.moveTo(0, 24);
+  ctx.lineTo(rect.width, 24);
+  ctx.stroke();
+  ctx.setLineDash([]);
+ 
+  // creatures
+  for (let i = creatures.length - 1; i >= 0; i--) {
+    const c = creatures[i];
+    if (c.dead) { creatures.splice(i, 1); continue; }
+    // movement
+    if (c.leaving) c.tx = rect.width + 20;
+    c.x += (c.tx - c.x) * 0.02;
+    c.y += (c.ty - c.y) * 0.02;
+    if (Math.abs(c.x - c.tx) < 5 && Math.abs(c.y - c.ty) < 5 && !c.leaving) {
+      c.tx = 30 + Math.random() * (rect.width - 60);
+      c.ty = 40 + Math.random() * (rect.height - 60);
+    }
+    if (c.leaving && c.x > rect.width + 5) { c.dead = true; continue; }
+    if (c.dying) {
+      c.opacity = (c.opacity ?? 1) - 0.04;
+      if (c.opacity <= 0) { c.dead = true; continue; }
+    }
+    // body
+    ctx.globalAlpha = c.opacity ?? 1;
+    ctx.fillStyle = `hsl(${c.hue}, 50%, 35%)`;
+    ctx.beginPath();
+    ctx.ellipse(c.x, c.y, 8, 5, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // head
+    ctx.beginPath();
+    ctx.ellipse(c.x + 7, c.y - 1, 4, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    // ear
+    ctx.beginPath();
+    ctx.ellipse(c.x + 8, c.y - 4, 1.5, 3, 0, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+  updateStats();
+  requestAnimationFrame(drawPop);
+}
+spawnCreatures(8);
+drawPop();
+ 
+document.querySelector('.pop-controls .add').addEventListener('click', () => spawnCreatures(2, 'birth'));
+document.querySelector('.pop-controls .imm').addEventListener('click', () => spawnCreatures(3, 'imm'));
+document.querySelector('.pop-controls .emm').addEventListener('click', () => { for (let i = 0; i < 2; i++) removeCreature('emm'); });
+document.querySelector('.pop-controls .dth').addEventListener('click', () => { for (let i = 0; i < 2; i++) removeCreature('death'); });
+document.querySelector('.pop-controls .rst').addEventListener('click', () => { creatures = []; spawnCreatures(8); });
+ 
+/* ============ QUIZ ============ */
+const questions = [
+  {
+    q: "In an energy pyramid, which trophic level would have the MOST available energy?",
+    img: 'pyramid',
+    opts: ['Level 1 (Producers / Grass)', 'Level 2 (Grasshoppers)', 'Level 3 (Frogs)', 'Level 4 (Snakes)'],
+    answer: 0,
+    exp: "Level 1 — the producers. Energy enters the ecosystem through plants doing photosynthesis. Each level up loses ~90% of the energy. So the BOTTOM has the most."
+  },
+  {
+    q: "Which of the following is the term for ALL the individuals of a given species in a specific area at a certain time?",
+    opts: ['Ecosystem', 'Population', 'Community', 'Species'],
+    answer: 1,
+    exp: "Population. Key word: ONE species. (Community = many species. Ecosystem = community + abiotic factors.)"
+  },
+  {
+    q: "Which is the term for ALL the different groups of organisms in a specific area — for example, all of the crabs, seagulls, and sea grass at the beach?",
+    opts: ['Ecosystem', 'Population', 'Community', 'Species'],
+    answer: 2,
+    exp: "Community. Multiple different species living together. (If you also added the sand, water, and sunlight, you'd have an ecosystem.)"
+  },
+  {
+    q: "Which level of organization includes the abiotic factors water, sunlight, oxygen, and temperature?",
+    opts: ['Community', 'Ecosystem', 'Organism', 'Population'],
+    answer: 1,
+    exp: "Ecosystem. The community PLUS its non-living (abiotic) environment. The other levels only describe living things."
+  },
+  {
+    q: "Which of the following is the correct order of the levels of organization?",
+    opts: ['Population, organism, biome, community, ecosystem', 'Ecosystem, population, community, organism, biome', 'Biome, community, ecosystem, population, organism', 'Organism, population, community, ecosystem, biome'],
+    answer: 3,
+    exp: "Organism → Population → Community → Ecosystem → Biome. Smallest to largest. Mnemonic: 'Only Pros Can Eat Burgers.'"
+  },
+  {
+    q: "Looking at the food web with foxes, hawks, owls, snakes, spiders, herbivorous insects, and plants — which organisms are CONSUMED BY spiders?",
+    img: 'foodweb',
+    opts: ['Plants', 'Herbivorous insects', 'Insectivorous birds', 'Snakes'],
+    answer: 1,
+    exp: "Herbivorous insects. Spiders are secondary consumers — they eat insects that ate plants. They don't eat plants themselves, and they get eaten BY birds/snakes (not the other way around)."
+  },
+  {
+    q: "Which of the following best models the FLOW OF ENERGY within an ecosystem (producer → primary consumer → secondary consumer)?",
+    opts: ['Plants → Mice → Snakes', 'Seed-eating birds → Spiders → Toads', 'Squirrels → Foxes → Snakes', 'Hawks → Rabbits → Plants'],
+    answer: 0,
+    exp: "Plants → Mice → Snakes. Energy must flow FROM producer TO higher consumers. Plants are producers, mice eat plants (primary consumer), snakes eat mice (secondary). The other options either skip the producer or run backwards."
+  },
+  {
+    q: "Which of the following is NOT a negative impact of invasive species?",
+    opts: ['Increased competition with native species for resources', 'Decreased carrying capacity of the habitat', 'Native species are crowded out or replaced', 'Decreased competition with native species for resources'],
+    answer: 3,
+    exp: "DECREASED competition is the trick — that's actually GOOD for natives. Invasives INCREASE competition (option A), which is bad. Read 'NOT' carefully on these questions."
+  },
+  {
+    q: "Santee Cooper is stocking lakes with 109,000 sterile grass carp to eat hydrilla (an invasive plant). What type of control is this?",
+    opts: ['Physical', 'Chemical', 'Biological', 'Invasive'],
+    answer: 2,
+    exp: "Biological. They're using a LIVING organism (the carp) to control the invasive. Physical = humans removing it by hand. Chemical = sprays. Biological = a creature does the work."
+  },
+  {
+    q: "A group of volunteers is pulling invasive vines out of a field by hand. What method of control are they using?",
+    opts: ['Physical', 'Chemical', 'Biological', 'Invasive'],
+    answer: 0,
+    exp: "Physical. People are physically removing the plants with their hands and tools. No chemicals, no helper organisms — just human muscle."
+  },
+  {
+    q: "Looking at the herbicide effectiveness graph, which herbicide is MOST effective in controlling crested floating heart? (The bars showed: Imazamox ~90%, Endothall ~100%, Triclopyr ~60%, Flumioxazin ~60%)",
+    opts: ['Imazamox', 'Endothall', 'Triclopyr', 'Flumioxazin'],
+    answer: 1,
+    exp: "Endothall — its bar reaches the highest at ~100%. On bar graphs, the tallest bar = highest value = most effective."
+  },
+  {
+    q: "Using herbicides to control an invasive plant species — what type of control is this?",
+    opts: ['Physical', 'Chemical', 'Biological', 'Invasive'],
+    answer: 1,
+    exp: "Chemical. Herbicides are chemicals. (Pesticides for animals are also chemical.) Easy memory hook: chemical = chemicals."
+  },
+  {
+    q: "Which of the following BEST describes an invasive species?",
+    opts: ['A non-native species that negatively impacts an environment', 'An organism whose population is well under control', 'An organism that has many predators', 'A species that is native to the area'],
+    answer: 0,
+    exp: "Non-native AND negatively impacting. Both halves matter. A non-native species that doesn't cause harm isn't 'invasive' — just 'introduced.' The damage is what makes it invasive."
+  },
+  {
+    q: "Which is a 'biological' control for the invasive Lionfish?",
+    opts: ['Training sharks to eat them', 'Scuba divers hunting them', 'Poisoning or trapping them', 'Serving them in seafood restaurants'],
+    answer: 0,
+    exp: "Training sharks — that's using another LIVING organism (sharks) as the control. Divers hunting = physical. Poison = chemical. Restaurants = also a form of physical removal by humans."
+  },
+  {
+    q: "Why are wolves considered 'apex predators' or top consumers in a food web?",
+    opts: ["They don't have any natural predators", 'They reproduce uncontrollably to exceed carrying capacity', 'They are carnivores and eat other organisms', 'They are producers and make food from sunlight'],
+    answer: 0,
+    exp: "Apex predators have NO natural predators. Being a carnivore (option C) is true but doesn't make them apex — many carnivores get eaten. The defining feature: nothing hunts them."
+  }
+];
+ 
+let qIdx = 0, qScore = 0, qHistory = [];
+ 
+document.getElementById('quizStart').addEventListener('click', startQuiz);
+async function startQuiz() {
+  document.getElementById('quizIntro').style.display = 'none';
+  document.getElementById('quizCard').classList.add('active');
+  qIdx = 0; qScore = 0;
+  showQuestion();
+}
+ 
+function showQuestion() {
+  if (qIdx >= questions.length) return showResults();
+  const q = questions[qIdx];
+  document.getElementById('quizCounter').textContent = `QUESTION ${qIdx + 1} OF ${questions.length}`;
+  document.getElementById('quizScore').textContent = `${qScore} ✓`;
+  document.getElementById('quizBar').style.width = `${(qIdx / questions.length) * 100}%`;
+  document.getElementById('quizQ').textContent = q.q;
+ 
+  // image
+  const imgWrap = document.getElementById('quizImg');
+  imgWrap.innerHTML = '';
+  if (q.img === 'pyramid') {
+    imgWrap.innerHTML = `<svg viewBox="0 0 300 220" style="max-width:280px;">
+      <polygon points="150,15 168,45 132,45" fill="#9a3d2a"/><text x="150" y="38" text-anchor="middle" fill="white" font-size="9" font-family="DM Sans" font-weight="700">L4 Snake</text>
+      <polygon points="132,45 168,45 180,80 120,80" fill="var(--clay)"/><text x="150" y="68" text-anchor="middle" fill="white" font-size="10" font-family="DM Sans" font-weight="700">L3 Frog</text>
+      <polygon points="120,80 180,80 198,125 102,125" fill="var(--sun-deep)"/><text x="150" y="110" text-anchor="middle" fill="white" font-size="11" font-family="DM Sans" font-weight="700">L2 Grasshopper</text>
+      <polygon points="102,125 198,125 220,180 80,180" fill="var(--leaf)"/><text x="150" y="160" text-anchor="middle" fill="white" font-size="12" font-family="DM Sans" font-weight="700">L1 Grass</text>
+    </svg>`;
+  } else if (q.img === 'foodweb') {
+    imgWrap.innerHTML = `<svg viewBox="0 0 320 200" style="max-width:320px;">
+      <text x="20" y="190" font-size="11" font-family="DM Sans" fill="var(--moss)">🌿 Plants</text>
+      <text x="100" y="120" font-size="11" font-family="DM Sans" fill="var(--moss)">🐛 Herbivorous insects</text>
+      <text x="200" y="80" font-size="11" font-family="DM Sans" fill="var(--clay)">🕷 Spiders</text>
+      <text x="200" y="40" font-size="11" font-family="DM Sans" fill="var(--moss)">🐦 Insectivorous birds</text>
+      <line x1="50" y1="180" x2="120" y2="125" stroke="var(--moss)" stroke-width="1.5" marker-end="url(#aw)"/>
+      <line x1="160" y1="115" x2="210" y2="80" stroke="var(--moss)" stroke-width="1.5" marker-end="url(#aw)"/>
+      <line x1="220" y1="75" x2="220" y2="45" stroke="var(--moss)" stroke-width="1.5" marker-end="url(#aw)"/>
+      <defs><marker id="aw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--moss)"/></marker></defs>
+    </svg>`;
+  }
+ 
+  const opts = document.getElementById('quizOpts');
+  opts.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'quiz-option';
+    btn.innerHTML = `<span class="letter">${String.fromCharCode(65 + i)}</span><span>${opt}</span>`;
+    btn.addEventListener('click', () => answer(i));
+    opts.appendChild(btn);
+  });
+  document.getElementById('quizExp').classList.remove('show','right','wrong');
+  document.getElementById('quizNext').classList.remove('show');
+}
+ 
+function answer(i) {
+  const q = questions[qIdx];
+  const correct = i === q.answer;
+  const opts = document.querySelectorAll('.quiz-option');
+  opts.forEach((o, idx) => {
+    o.disabled = true;
+    if (idx === q.answer) o.classList.add('correct');
+    if (idx === i && !correct) o.classList.add('wrong');
+  });
+  const exp = document.getElementById('quizExp');
+  exp.classList.add('show');
+  exp.classList.add(correct ? 'right' : 'wrong');
+  document.getElementById('quizVerdict').textContent = correct ? '✓ Correct!' : '✗ Not quite.';
+  document.getElementById('quizExpText').textContent = q.exp;
+  if (correct) qScore++;
+  document.getElementById('quizScore').textContent = `${qScore} ✓`;
+  const next = document.getElementById('quizNext');
+  next.classList.add('show');
+  next.textContent = qIdx === questions.length - 1 ? 'See results' : 'Next question';
+}
+ 
+document.getElementById('quizNext').addEventListener('click', () => {
+  qIdx++;
+  if (qIdx >= questions.length) showResults();
+  else showQuestion();
+});
+ 
+async function showResults() {
+  const card = document.getElementById('quizCard');
+  document.getElementById('quizBar').style.width = '100%';
+  const pct = Math.round((qScore / questions.length) * 100);
+  let feedback;
+  if (pct === 100) feedback = "🎉 Perfect score. You're locked in.";
+  else if (pct >= 85) feedback = "👏 Excellent. You're ready for the test.";
+  else if (pct >= 70) feedback = "👍 Solid foundation. Review the ones you missed.";
+  else if (pct >= 50) feedback = "📚 Halfway there. Re-read sections, then re-quiz tomorrow.";
+  else feedback = "💪 Keep going. Re-read the chapters and try again — that's how learning works.";
+ 
+  // load history and update
+  const history = (await store.get('quiz_history')) || [];
+  history.unshift({ score: qScore, total: questions.length, ts: Date.now(), pct });
+  history.length = Math.min(history.length, 10);
+  await store.set('quiz_history', history);
+ 
+  let historyHtml = '';
+  if (history.length > 1) {
+    historyHtml = `<div class="quiz-history">
+      <div class="quiz-history-title">Your history (last ${history.length} attempts)</div>
+      ${history.map((h, i) => {
+        const d = new Date(h.ts);
+        const date = `${d.getMonth() + 1}/${d.getDate()} ${d.getHours()}:${String(d.getMinutes()).padStart(2,'0')}`;
+        return `<div class="history-row"><span>${i === 0 ? '→ NOW' : date}</span><span>${h.score}/${h.total} (${h.pct}%)</span></div>`;
+      }).join('')}
+    </div>`;
+  }
+ 
+  card.innerHTML = `
+    <div class="quiz-results">
+      <div class="quiz-score">${qScore}<span class="denom">/${questions.length}</span></div>
+      <div class="quiz-feedback">${feedback}</div>
+      <button class="quiz-start" onclick="startQuiz()">↻ Take it again</button>
+      ${historyHtml}
+    </div>
+  `;
+  // update progress pill
+  document.getElementById('progressPill').textContent = `⚘ ${pct}% MASTERED`;
+}
+ 
+/* On load: check past progress */
+(async () => {
+  const history = await store.get('quiz_history');
+  if (history && history.length) {
+    document.getElementById('progressPill').textContent = `⚘ BEST ${Math.max(...history.map(h => h.pct))}%`;
+  }
+})();
+</script>
+</body>
+</html>
+ 
